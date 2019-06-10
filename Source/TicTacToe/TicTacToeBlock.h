@@ -24,7 +24,7 @@ public:
 	ATicTacToeBlock();
 
 	/** Which type are we currently?*/
-	int Type;
+	int BlockType; // magic numbers not so good, should be enum
 
 	/** Pointer to white material used on default block */
 	UPROPERTY()
@@ -57,7 +57,7 @@ public:
 	void HandleClicked();
 
 	/** Gets the material by int */
-	UMaterialInterface* GetMaterialInterfaceByInt(int iMat);// should this be bool?
+	UMaterialInterface* GetMaterialByType(int Type);// should this be bool?
 
 	void Highlight(bool bOn);
 

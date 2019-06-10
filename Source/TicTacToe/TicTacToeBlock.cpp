@@ -63,15 +63,15 @@ void ATicTacToeBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimi
 void ATicTacToeBlock::HandleClicked()
 {
 	// Do not handle click if the block has already been activated.
-	if (Type != 0)
+	if (BlockType != 0)
 	{
 		return;
 	}
 	
-	Type = OwningGrid->GetCurrentType();
+	BlockType = OwningGrid->GetCurrentType();
 
 	// Change material
-	BlockMesh->SetMaterial(0, GetMaterialInterfaceByInt(Type));
+	BlockMesh->SetMaterial(0, GetMaterialByType(BlockType));
 	// Tell the Grid
 	if (OwningGrid != nullptr)
 	{
@@ -80,22 +80,22 @@ void ATicTacToeBlock::HandleClicked()
 	}
 }
 
-UMaterialInterface* ATicTacToeBlock::GetMaterialInterfaceByInt(int iMat) {
-	switch (iMat)
+UMaterialInterface* ATicTacToeBlock::GetMaterialByType(int Type) {
+	switch (Type)
 	{
 	case 1:
-		return (UMaterialInterface*)OrangeMaterial;
+		return OrangeMaterial;
 	case -1:
-		return (UMaterialInterface*)BlueMaterial;
+		return BlueMaterial;
 	default:
-		return (UMaterialInterface*)BaseMaterial;
+		return BaseMaterial;
 	}
 }
 
 void ATicTacToeBlock::Highlight(bool bOn)
 {
 	// Do not highlight if the block has already been activated.
-	if (Type != 0)
+	if (BlockType != 0)
 	{
 		return;
 	}
