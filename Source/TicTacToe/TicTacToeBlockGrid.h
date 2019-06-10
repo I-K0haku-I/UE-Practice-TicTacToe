@@ -26,6 +26,9 @@ public:
 	/** How many blocks have been clicked */
 	int32 Score;
 
+	/** Current turn role by int8. 1 to circle, -1 to cross.*/
+	int CurrentType;
+
 	/** Number of blocks along each side of grid */
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
 	int32 Size;
@@ -43,6 +46,10 @@ public:
 
 	/** Handle the block being clicked */
 	void AddScore();
+
+	int GetCurrentType();
+
+	void ChangeTurn();
 
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }

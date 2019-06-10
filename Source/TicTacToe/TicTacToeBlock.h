@@ -23,18 +23,22 @@ class ATicTacToeBlock : public AActor
 public:
 	ATicTacToeBlock();
 
-	/** Are we currently active? */
-	bool bIsActive;
+	/** Which type are we currently?*/
+	int Type;
 
-	/** Pointer to white material used on the focused block */
+	/** Pointer to white material used on default block */
 	UPROPERTY()
 	class UMaterial* BaseMaterial;
 
-	/** Pointer to blue material used on inactive blocks */
+	/** Pointer to darker material used on the focused block */
+	UPROPERTY()
+	class UMaterialInstance* HighlightMaterial;
+
+	/** Pointer to blue material used on cross blocks */
 	UPROPERTY()
 	class UMaterialInstance* BlueMaterial;
 
-	/** Pointer to orange material used on active blocks */
+	/** Pointer to orange material used on circle blocks */
 	UPROPERTY()
 	class UMaterialInstance* OrangeMaterial;
 
@@ -51,6 +55,9 @@ public:
 	void OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent);
 
 	void HandleClicked();
+
+	/** Gets the material by int */
+	UMaterialInterface* GetMaterialInterfaceByInt(int iMat);// should this be bool?
 
 	void Highlight(bool bOn);
 

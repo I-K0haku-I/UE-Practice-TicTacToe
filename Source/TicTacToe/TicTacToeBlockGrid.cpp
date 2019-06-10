@@ -23,6 +23,7 @@ ATicTacToeBlockGrid::ATicTacToeBlockGrid()
 	// Set defaults
 	Size = 3;
 	BlockSpacing = 300.f;
+	CurrentType = -1;
 }
 
 
@@ -61,6 +62,16 @@ void ATicTacToeBlockGrid::AddScore()
 
 	// Update text
 	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score)));
+}
+
+int ATicTacToeBlockGrid::GetCurrentType()
+{
+	return CurrentType;
+}
+
+void ATicTacToeBlockGrid::ChangeTurn()
+{
+	CurrentType = CurrentType / -1;
 }
 
 #undef LOCTEXT_NAMESPACE
