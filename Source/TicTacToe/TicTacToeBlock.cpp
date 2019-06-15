@@ -98,19 +98,20 @@ void ATicTacToeBlock::Highlight(bool bOn)
 		BlockMesh->SetMaterial(0, HighlightMaterial);
 	}
 	else
-	{	// Using GetMaterialByType for fail safe
-		BlockMesh->SetMaterial(0, GetMaterialByType(BlockType));
+	{
+		SetMaterialByType(BlockType);
 	}
-}
-
-void ATicTacToeBlock::SetMaterialByType(int _type)
-{
-	UMaterialInterface* matI = GetMaterialByType(_type);
-	BlockMesh->SetMaterial(0, matI);
 }
 
 void ATicTacToeBlock::SetType(int _type)
 {
 	SetMaterialByType(_type);
 	BlockType = _type;
+}
+
+void ATicTacToeBlock::SetMaterialByType(int _type)
+{
+	UE_LOG(LogTemp, Verbose, TEXT("Changing material to %d!"), _type);
+	UMaterialInterface* matI = GetMaterialByType(_type);
+	BlockMesh->SetMaterial(0, matI);
 }

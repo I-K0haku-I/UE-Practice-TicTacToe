@@ -101,12 +101,13 @@ void ATicTacToeBlockGrid::HandleTurn(ATicTacToeBlock* executedBlock)
 	{
 		AddScore();
 		ChangeTurn();
-		OnNextTurn();
+		OnPreNextTurn();
 	}
 }
 
-void ATicTacToeBlockGrid::OnNextTurn()
+void ATicTacToeBlockGrid::OnPreNextTurn()
 {
+	UE_LOG(LogTemp, VeryVerbose, TEXT("On pre-next turn!"))
 	// TODO: implement ai stuff here? maybe?
 }
 
@@ -114,7 +115,7 @@ int ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 {
 	UE_LOG(LogTemp, Verbose, TEXT("Checking win tile!"));
 
-	int arrayPos = GetPosition(checkBlock);
+	int arrayPos = GetIndex(checkBlock);
 
 	int by = (int)arrayPos / Size;
 	int bx = arrayPos - by * Size;
@@ -126,22 +127,22 @@ int ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 
 	for (int i = 0; i < Size; i++)
 	{
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), bx, i, GetPosition(bx, i));
-		if (BlockArray[GetPosition(bx, i)]->BlockType == CurrentType)
+		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), bx, i, GetIndex(bx, i));
+		if (BlockArray[GetIndex(bx, i)]->BlockType == CurrentType)
 			hori++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, by, GetPosition(i, by));
-		if (BlockArray[GetPosition(i, by)]->BlockType == CurrentType)
+		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, by, GetIndex(i, by));
+		if (BlockArray[GetIndex(i, by)]->BlockType == CurrentType)
 			vert++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, (Size - 1 - i), GetPosition(i, (Size - 1 - i)));
-		if (BlockArray[GetPosition(i, Size - 1 - i)]->BlockType == CurrentType)
+		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, (Size - 1 - i), GetIndex(i, (Size - 1 - i)));
+		if (BlockArray[GetIndex(i, Size - 1 - i)]->BlockType == CurrentType)
 			diag++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, i, GetPosition(i, i));
-		if (BlockArray[GetPosition(i, i)]->BlockType == CurrentType)
+		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, i, GetIndex(i, i));
+		if (BlockArray[GetIndex(i, i)]->BlockType == CurrentType)
 			diagRev++;
 	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("TILEPOS: %d, %d"), bx, by);
-	UE_LOG(LogTemp, Verbose, TEXT("H: %d, V: %d, D: %d, DR: %d"), hori, vert, diag, diagRev);
+	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEPOS: %d, %d"), bx, by);
+	UE_LOG(LogTemp, VeryVerbose, TEXT("H: %d, V: %d, D: %d, DR: %d"), hori, vert, diag, diagRev);
 
 	if ((hori == Size || vert == Size || diag == Size || diagRev == Size))
 		return CurrentType;
@@ -167,12 +168,12 @@ void ATicTacToeBlockGrid::HandleGameEnd()
 }
 
 
-int ATicTacToeBlockGrid::GetPosition(int num_x, int num_y)
+int ATicTacToeBlockGrid::GetIndex(int num_x, int num_y)
 {
 	return  num_x + (num_y * Size);
 }
 
-int ATicTacToeBlockGrid::GetPosition(ATicTacToeBlock* block_pos)
+int ATicTacToeBlockGrid::GetIndex(ATicTacToeBlock* block_pos)
 {
 	return BlockArray.Find(block_pos);
 }

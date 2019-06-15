@@ -21,6 +21,9 @@ class ATicTacToeBlockGrid : public AActor
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UTextRenderComponent* ScoreText;
 
+	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UTextRenderComponent* EndText;
+
 public:
 	ATicTacToeBlockGrid();
 
@@ -61,16 +64,16 @@ public:
 	/** Handle the turn when block is being clicked */
 	void HandleTurn(ATicTacToeBlock* executedBlock);
 
-	/** Handle calling AI on next turn */
-	void OnNextTurn();
+	/** Handle calling AI on pre-next turn */
+	void OnPreNextTurn();
 
 	/** Returns winner block type. 0 to none, 1 to circle win, -1 to cross win, 2 to draw. */
 	int CheckWin(ATicTacToeBlock* checkBlock); // TODO: fix magic number
 
 	/** Returns position of array from 2D vector */
-	int GetPosition(int num_x, int num_y);
+	int GetIndex(int num_x, int num_y);
 	/** Returns position of array from item of array */
-	int GetPosition(ATicTacToeBlock * block_pos);
+	int GetIndex(ATicTacToeBlock * block_pos);
 
 	/** Handle the resetting game */
 	void ResetGame();

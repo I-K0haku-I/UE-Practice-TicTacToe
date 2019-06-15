@@ -20,11 +20,11 @@ class ATicTacToeBlock : public AActor
 	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* BlockMesh;
 
-public:
-	ATicTacToeBlock();
-
 	/** Which type are we currently? */
 	int BlockType; // magic numbers not so good, should be enum
+
+public:
+	ATicTacToeBlock();
 
 	/** Pointer to white material used on default block */
 	UPROPERTY()
@@ -61,11 +61,12 @@ public:
 
 	void Highlight(bool bOn);
 
-	/** Sets the material by type */
-	void SetMaterialByType(int _type); // this is magic. // TODO: make enum for magic number
-
 	/** Sets the type of block */
 	void SetType(int _type);
+
+private:
+	/** Sets the material by type */
+	void SetMaterialByType(int _type);
 
 public:
 	/** Returns DummyRoot subobject **/
