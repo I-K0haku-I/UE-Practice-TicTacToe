@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Public/TicTacToeDefinitionsHolder.h"
 #include "TicTacToeBlock.generated.h"
 
 /** A block that can be clicked */
@@ -21,7 +22,7 @@ class ATicTacToeBlock : public AActor
 	class UStaticMeshComponent* BlockMesh;
 
 	/** Which type are we currently? */
-	int BlockType; // magic numbers not so good, should be enum
+	EBlockType BlockType; // magic numbers not so good, should be enum
 
 public:
 	ATicTacToeBlock();
@@ -57,16 +58,18 @@ public:
 	void HandleClicked();
 
 	/** Gets the material by type */
-	UMaterialInterface* GetMaterialByType(int Type); // magica numba
+	UMaterialInterface* GetMaterialByType(EBlockType _type); // magica numba
 
 	void Highlight(bool bOn);
 
 	/** Sets the type of block */
-	void SetType(int _type);
+	void SetType(EBlockType _type);
+
+	EBlockType GetBlockType();
 
 private:
 	/** Sets the material by type */
-	void SetMaterialByType(int _type);
+	void SetMaterialByType(EBlockType _type);
 
 public:
 	/** Returns DummyRoot subobject **/

@@ -4,7 +4,9 @@
 #include "TicTacToeBlock.h"
 #include "Components/TextRenderComponent.h"
 #include "Engine/World.h"
+#include "Public/TicTacToeDefinitionsHolder.h"
 
+#define TOSTR(var) #var
 #define LOCTEXT_NAMESPACE "PuzzleBlockGrid"
 
 ATicTacToeBlockGrid::ATicTacToeBlockGrid()
@@ -23,7 +25,7 @@ ATicTacToeBlockGrid::ATicTacToeBlockGrid()
 	// Set defaults
 	Size = 3;
 	BlockSpacing = 300.f;
-	CurrentType = -1;
+	CurrentType = EBlockType::Cross;
 }
 
 
@@ -55,6 +57,12 @@ void ATicTacToeBlockGrid::BeginPlay()
 			BlockArray.Add(NewBlock);
 		}
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("Initalizing completed!"));
+
+	// Allow player inputs
+	IsInMatch = true;
+
 }
 
 
@@ -67,51 +75,50 @@ void ATicTacToeBlockGrid::AddScore()
 	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score)));
 }
 
-int ATicTacToeBlockGrid::GetCurrentType()
+EBlockType ATicTacToeBlockGrid::GetCurrentType()
 {
 	return CurrentType;
 }
 
 void ATicTacToeBlockGrid::ChangeTurn()
 {
-	CurrentType = CurrentType / -1;
+	CurrentType = CurrentType == EBlockType::Circle ? EBlockType::Cross : EBlockType::Circle;
 }
 
 void ATicTacToeBlockGrid::HandleTurn(ATicTacToeBlock* executedBlock)
 {
 	UE_LOG(LogTemp, Verbose, TEXT("Processing turn!"));
 
-	if (CurrentGameState != 0 || executedBlock->BlockType != 0) {
+	if (!IsInMatch || executedBlock->GetBlockType() != EBlockType::None) {
 		return;
 	}
 
 	// Set type / material
 	executedBlock->SetType(CurrentType);
 
-	int winState = CheckWin(executedBlock);
+	WinState = CheckWin(executedBlock);
 
-	UE_LOG(LogTemp, Verbose, TEXT("WINSTATE: %d"), winState);
+	UE_LOG(LogTemp, Verbose, TEXT("WINSTATE: %s"), TOSTR(WinState));
 
-	if (winState != 0)
-	{
-		CurrentGameState = winState;
-		HandleGameEnd();
-	}
-	else
+	if (WinState == EWinState::None)
 	{
 		AddScore();
 		ChangeTurn();
 		OnPreNextTurn();
+	}
+	else
+	{
+		HandleGameEnd();
 	}
 }
 
 void ATicTacToeBlockGrid::OnPreNextTurn()
 {
 	UE_LOG(LogTemp, VeryVerbose, TEXT("On pre-next turn!"))
-	// TODO: implement ai stuff here? maybe?
+		// TODO: implement ai stuff here? maybe?
 }
 
-int ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
+EWinState ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 {
 	UE_LOG(LogTemp, Verbose, TEXT("Checking win tile!"));
 
@@ -128,16 +135,16 @@ int ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 	for (int i = 0; i < Size; i++)
 	{
 		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), bx, i, GetIndex(bx, i));
-		if (BlockArray[GetIndex(bx, i)]->BlockType == CurrentType)
+		if (BlockArray[GetIndex(bx, i)]->GetBlockType() == CurrentType)
 			hori++;
 		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, by, GetIndex(i, by));
-		if (BlockArray[GetIndex(i, by)]->BlockType == CurrentType)
+		if (BlockArray[GetIndex(i, by)]->GetBlockType() == CurrentType)
 			vert++;
 		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, (Size - 1 - i), GetIndex(i, (Size - 1 - i)));
-		if (BlockArray[GetIndex(i, Size - 1 - i)]->BlockType == CurrentType)
+		if (BlockArray[GetIndex(i, Size - 1 - i)]->GetBlockType() == CurrentType)
 			diag++;
 		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, i, GetIndex(i, i));
-		if (BlockArray[GetIndex(i, i)]->BlockType == CurrentType)
+		if (BlockArray[GetIndex(i, i)]->GetBlockType() == CurrentType)
 			diagRev++;
 	}
 
@@ -145,20 +152,22 @@ int ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 	UE_LOG(LogTemp, VeryVerbose, TEXT("H: %d, V: %d, D: %d, DR: %d"), hori, vert, diag, diagRev);
 
 	if ((hori == Size || vert == Size || diag == Size || diagRev == Size))
-		return CurrentType;
+		return CurrentType == EBlockType::Circle ? EWinState::Circle : EWinState::Cross;
 	else
 		for (int n = 0; n != BlockArray.Num(); n++)
 		{
-			if (BlockArray[n]->BlockType == 0)
-				return 0;
+			if (BlockArray[n]->GetBlockType() == EBlockType::None)
+				return EWinState::None;
 		}
 
-	return 2;
+	return EWinState::Draw;
 }
 
 void ATicTacToeBlockGrid::HandleGameEnd()
 {
 	UE_LOG(LogTemp, Log, TEXT("Ending!"));
+
+	IsInMatch = false;
 
 	//TODO: Implement game end
 	// how do i implement showing reset button? :thinking:
@@ -183,20 +192,22 @@ void ATicTacToeBlockGrid::ResetGame()
 	UE_LOG(LogTemp, Log, TEXT("Resetting!"));
 
 	// Freeze game before resetting
-	CurrentGameState = 4;
+	//CurrentGameState = 4;
+	IsInMatch = false;
 
 	UE_LOG(LogTemp, Verbose, TEXT("Resetting block type!"));
-	
+
 	for (int n = 0; n != BlockArray.Num(); n++)
 	{
-		BlockArray[n]->SetType(0);
+		BlockArray[n]->SetType(EBlockType::None);
 	}
 
 	UE_LOG(LogTemp, Verbose, TEXT("Resetting GameStates!"));
 
-	Score = 0;				// Reset score
-	CurrentType = -1;		// Starting from cross
-	CurrentGameState = 0;	// Enable player inputs
+	Score = 0;								// Reset score
+	CurrentType = EBlockType::Cross;		// Starting from cross
+	//CurrentGameState = 0;					// Enable player inputs
+	IsInMatch = true;
 
 	UE_LOG(LogTemp, Log, TEXT("Reset complete!"));
 }

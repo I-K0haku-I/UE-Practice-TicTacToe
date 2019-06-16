@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Public/TicTacToeDefinitionsHolder.h"
 #include "TicTacToeBlock.h"
 #include "TicTacToeBlockGrid.generated.h"
 
@@ -30,11 +31,17 @@ public:
 	/** How many blocks have been clicked */
 	int32 Score;
 
-	/** Current turn role by int. 1 to circle, -1 to cross. */
-	int CurrentType;
+	/** Current turn role */
+	EBlockType CurrentType;
+	/** Current win state */
+	EWinState WinState;
+	/** Current match state */
+	bool IsInMatch;
+	/** Current pause state */
+	bool IsInPause;
 
 	/** Current game state by int. 0 to in match, 1 to circle win, -1 to cross win, 2 to draw game, 3 to in pause. */
-	int CurrentGameState;
+	//int CurrentGameState;
 
 	/** Array of owning blocks */
 	TArray<ATicTacToeBlock*> BlockArray;
@@ -57,7 +64,7 @@ public:
 	/** Handle the block being clicked */
 	void AddScore();
 
-	int GetCurrentType();
+	EBlockType GetCurrentType();
 
 	void ChangeTurn();
 
@@ -68,7 +75,7 @@ public:
 	void OnPreNextTurn();
 
 	/** Returns winner block type. 0 to none, 1 to circle win, -1 to cross win, 2 to draw. */
-	int CheckWin(ATicTacToeBlock* checkBlock); // TODO: fix magic number
+	EWinState CheckWin(ATicTacToeBlock* checkBlock); // TODO: fix magic number
 
 	/** Returns position of array from 2D vector */
 	int GetIndex(int num_x, int num_y);

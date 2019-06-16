@@ -14,6 +14,15 @@ enum class EBlockType : uint8
 	Circle,
 };
 
+UENUM()
+enum class EWinState : uint8
+{
+	None,
+	Cross,
+	Circle,
+	Draw,
+};
+
 /**
  * 
  */

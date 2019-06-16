@@ -6,6 +6,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInstance.h"
+#include "Public/TicTacToeDefinitionsHolder.h"
+
+#define TOSTR(var) #var
 
 ATicTacToeBlock::ATicTacToeBlock()
 {
@@ -63,7 +66,7 @@ void ATicTacToeBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimi
 void ATicTacToeBlock::HandleClicked()
 {
 	// Do not handle click if the block has already been activated or current game state are not in match.
-	if (BlockType != 0 || OwningGrid->CurrentGameState != 0)
+	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
 	{
 		return;
 	}
@@ -72,13 +75,15 @@ void ATicTacToeBlock::HandleClicked()
 	OwningGrid->HandleTurn(this);
 }
 
-UMaterialInterface* ATicTacToeBlock::GetMaterialByType(int Type) {
-	switch (Type)
+UMaterialInterface* ATicTacToeBlock::GetMaterialByType(EBlockType _type) {
+	switch (_type)
 	{
-	case 1:
+	case EBlockType::Circle:
 		return OrangeMaterial;
-	case -1:
+	case EBlockType::Cross:
 		return BlueMaterial;
+	case EBlockType::None:
+		return BaseMaterial;
 	default:
 		return BaseMaterial;
 	}
@@ -86,9 +91,9 @@ UMaterialInterface* ATicTacToeBlock::GetMaterialByType(int Type) {
 
 void ATicTacToeBlock::Highlight(bool bOn)
 {
-	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %d, CURRENTGAMESTATE: %d"), OwningGrid->GetPosition(this), BlockType, OwningGrid->CurrentGameState);
+	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %s, INMATCH: %s, WINSTATE: %s"), OwningGrid->GetIndex(this), TOSTR(BlockType), TOSTR(OwningGrid->IsInMatch), TOSTR(OwningGrid->WinState));
 	// Do not highlight if the block has already been activated or if the current game state has not set to 0.
-	if (BlockType != 0 || OwningGrid->CurrentGameState != 0)
+	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
 	{
 		return;
 	}
@@ -103,15 +108,22 @@ void ATicTacToeBlock::Highlight(bool bOn)
 	}
 }
 
-void ATicTacToeBlock::SetType(int _type)
+void ATicTacToeBlock::SetType(EBlockType _type)
 {
 	SetMaterialByType(_type);
 	BlockType = _type;
 }
 
-void ATicTacToeBlock::SetMaterialByType(int _type)
+EBlockType ATicTacToeBlock::GetBlockType()
 {
-	UE_LOG(LogTemp, Verbose, TEXT("Changing material to %d!"), _type);
-	UMaterialInterface* matI = GetMaterialByType(_type);
+	return BlockType;
+}
+
+void ATicTacToeBlock::SetMaterialByType(EBlockType _type)
+{
+	UE_LOG(LogTemp, Verbose, TEXT("Changing material to %s!"), TOSTR(_type));
+	UMaterialInterface* matI;
+	matI = GetMaterialByType(_type);
 	BlockMesh->SetMaterial(0, matI);
+
 }
