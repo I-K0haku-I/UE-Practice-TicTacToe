@@ -114,3 +114,33 @@ void ATicTacToeBlock::SetType(int _type)
 	SetMaterialByType(_type);
 	BlockType = _type;
 }
+
+EBlockType ATicTacToeBlock::GetBlockType()
+{
+	switch (BlockType)
+	{
+	case -1:
+		return EBlockType::Cross;
+	case 1:
+		return EBlockType::Circle;
+	
+	case 0:
+	default:
+		return EBlockType::None;
+	}
+}
+
+void ATicTacToeBlock::SetBlockType(EBlockType newBlockType)
+{
+	switch (newBlockType)
+	{
+	case EBlockType::Cross:
+		BlockType = -1;
+	case EBlockType::Circle:
+		BlockType = 1;
+	
+	case EBlockType::None:
+	default:
+		BlockType = 0;
+	}
+}

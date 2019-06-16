@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TicTacToeDefinitionsHolder.h"
 #include "TicTacToeBlock.generated.h"
 
 /** A block that can be clicked */
@@ -66,6 +67,9 @@ public:
 
 	/** Sets the type of block */
 	void SetType(int _type);
+
+	EBlockType GetBlockType();
+	void SetBlockType(EBlockType newBlockType);
 
 public:
 	/** Returns DummyRoot subobject **/

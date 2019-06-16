@@ -84,7 +84,7 @@ void ATicTacToeBlockGrid::HandleTurn(ATicTacToeBlock* executedBlock)
 	if (CurrentGameState != 0 || executedBlock->BlockType != 0) {
 		return;
 	}
-
+	
 	// Set type / material
 	executedBlock->SetType(CurrentType);
 
