@@ -67,7 +67,7 @@ void ATicTacToeBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimi
 void ATicTacToeBlock::HandleClicked()
 {
 	// Do not handle click if the block has already been activated or currently not in match.
-	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
+	if (!IsClickable())
 	{
 		return;
 	}
@@ -94,7 +94,7 @@ void ATicTacToeBlock::Highlight(bool bOn)
 {
 	UE_LOG(LogBlock, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %s, INMATCH: %s, WINSTATE: %s"), OwningGrid->GetIndex(this), TOSTR(BlockType), TOSTR(OwningGrid->IsInMatch), TOSTR(OwningGrid->WinState));
 	// Do not highlight if the block has already been activated or currently not in match.
-	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
+	if (!IsClickable())
 	{
 		return;
 	}
@@ -119,6 +119,11 @@ void ATicTacToeBlock::SetType(EBlockType _type)
 EBlockType ATicTacToeBlock::GetBlockType()
 {
 	return BlockType;
+}
+
+bool ATicTacToeBlock::IsClickable()
+{
+	return BlockType == EBlockType::None && OwningGrid->IsInMatch;
 }
 
 void ATicTacToeBlock::SetMaterialByType(EBlockType _type)

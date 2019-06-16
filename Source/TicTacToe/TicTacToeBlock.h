@@ -68,6 +68,8 @@ public:
 
 	EBlockType GetBlockType();
 
+	bool IsClickable();
+
 private:
 	/** Sets the material by type */
 	void SetMaterialByType(EBlockType _type);
