@@ -7,6 +7,7 @@
 #include "Public/TicTacToeDefinitionsHolder.h"
 #include "TicTacToeBlock.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogBlock, Log, Verbose);
 /** A block that can be clicked */
 UCLASS(minimalapi)
 class ATicTacToeBlock : public AActor

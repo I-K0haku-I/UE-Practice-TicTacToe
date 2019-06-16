@@ -8,6 +8,7 @@
 
 #define TOSTR(var) #var
 #define LOCTEXT_NAMESPACE "PuzzleBlockGrid"
+DEFINE_LOG_CATEGORY(LogGrid);
 
 ATicTacToeBlockGrid::ATicTacToeBlockGrid()
 {
@@ -33,7 +34,7 @@ void ATicTacToeBlockGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Log, TEXT("Initializing!"));
+	UE_LOG(LogGrid, Log, TEXT("Initializing!"));
 
 	// Number of blocks
 	const int32 NumBlocks = Size * Size;
@@ -58,7 +59,7 @@ void ATicTacToeBlockGrid::BeginPlay()
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Initalizing completed!"));
+	UE_LOG(LogGrid, Log, TEXT("Initalizing completed!"));
 
 	// Allow player inputs
 	IsInMatch = true;
@@ -87,24 +88,20 @@ void ATicTacToeBlockGrid::ChangeTurn()
 
 void ATicTacToeBlockGrid::HandleTurn(ATicTacToeBlock* executedBlock)
 {
-	UE_LOG(LogTemp, Verbose, TEXT("Processing turn!"));
-
-	if (!IsInMatch || executedBlock->GetBlockType() != EBlockType::None) {
-		return;
-	}
+	UE_LOG(LogGrid, Verbose, TEXT("Processing turn!"));
 
 	// Set type / material
 	executedBlock->SetType(CurrentType);
 
-	WinState = CheckWin(executedBlock);
+	WinState = CheckWinState(executedBlock);
 
-	UE_LOG(LogTemp, Verbose, TEXT("WINSTATE: %s"), TOSTR(WinState));
+	UE_LOG(LogGrid, VeryVerbose, TEXT("WINSTATE: %s"), TOSTR(WinState));
 
+	// Is game not ended?
 	if (WinState == EWinState::None)
 	{
 		AddScore();
 		ChangeTurn();
-		OnPreNextTurn();
 	}
 	else
 	{
@@ -112,15 +109,9 @@ void ATicTacToeBlockGrid::HandleTurn(ATicTacToeBlock* executedBlock)
 	}
 }
 
-void ATicTacToeBlockGrid::OnPreNextTurn()
+EWinState ATicTacToeBlockGrid::CheckWinState(ATicTacToeBlock* checkBlock)
 {
-	UE_LOG(LogTemp, VeryVerbose, TEXT("On pre-next turn!"))
-		// TODO: implement ai stuff here? maybe?
-}
-
-EWinState ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
-{
-	UE_LOG(LogTemp, Verbose, TEXT("Checking win tile!"));
+	UE_LOG(LogGrid, Verbose, TEXT("Checking win tile!"));
 
 	int arrayPos = GetIndex(checkBlock);
 
@@ -134,22 +125,22 @@ EWinState ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 
 	for (int i = 0; i < Size; i++)
 	{
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), bx, i, GetIndex(bx, i));
+		UE_LOG(LogGrid, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), bx, i, GetIndex(bx, i));
 		if (BlockArray[GetIndex(bx, i)]->GetBlockType() == CurrentType)
 			hori++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, by, GetIndex(i, by));
+		UE_LOG(LogGrid, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, by, GetIndex(i, by));
 		if (BlockArray[GetIndex(i, by)]->GetBlockType() == CurrentType)
 			vert++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, (Size - 1 - i), GetIndex(i, (Size - 1 - i)));
+		UE_LOG(LogGrid, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, (Size - 1 - i), GetIndex(i, (Size - 1 - i)));
 		if (BlockArray[GetIndex(i, Size - 1 - i)]->GetBlockType() == CurrentType)
 			diag++;
-		UE_LOG(LogTemp, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, i, GetIndex(i, i));
+		UE_LOG(LogGrid, VeryVerbose, TEXT("CHECKINGTILEPOS: %d, %d, %d"), i, i, GetIndex(i, i));
 		if (BlockArray[GetIndex(i, i)]->GetBlockType() == CurrentType)
 			diagRev++;
 	}
 
-	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEPOS: %d, %d"), bx, by);
-	UE_LOG(LogTemp, VeryVerbose, TEXT("H: %d, V: %d, D: %d, DR: %d"), hori, vert, diag, diagRev);
+	UE_LOG(LogGrid, VeryVerbose, TEXT("TILEPOS: %d, %d"), bx, by);
+	UE_LOG(LogGrid, VeryVerbose, TEXT("H: %d, V: %d, D: %d, DR: %d"), hori, vert, diag, diagRev);
 
 	if ((hori == Size || vert == Size || diag == Size || diagRev == Size))
 		return CurrentType == EBlockType::Circle ? EWinState::Circle : EWinState::Cross;
@@ -165,15 +156,13 @@ EWinState ATicTacToeBlockGrid::CheckWin(ATicTacToeBlock* checkBlock)
 
 void ATicTacToeBlockGrid::HandleGameEnd()
 {
-	UE_LOG(LogTemp, Log, TEXT("Ending!"));
-
+	UE_LOG(LogGrid, Log, TEXT("Ending!"));
+	// Disable player inputs
 	IsInMatch = false;
 
-	//TODO: Implement game end
 	// how do i implement showing reset button? :thinking:
 
-	ResetGame();
-
+	ResetGame(); //TODO: Implement actual game end
 }
 
 
@@ -189,27 +178,27 @@ int ATicTacToeBlockGrid::GetIndex(ATicTacToeBlock* block_pos)
 
 void ATicTacToeBlockGrid::ResetGame()
 {
-	UE_LOG(LogTemp, Log, TEXT("Resetting!"));
+	UE_LOG(LogGrid, Log, TEXT("Resetting!"));
 
 	// Freeze game before resetting
 	//CurrentGameState = 4;
 	IsInMatch = false;
 
-	UE_LOG(LogTemp, Verbose, TEXT("Resetting block type!"));
+	UE_LOG(LogGrid, Verbose, TEXT("Resetting block type!"));
 
 	for (int n = 0; n != BlockArray.Num(); n++)
 	{
 		BlockArray[n]->SetType(EBlockType::None);
 	}
 
-	UE_LOG(LogTemp, Verbose, TEXT("Resetting GameStates!"));
+	UE_LOG(LogGrid, Verbose, TEXT("Resetting GameStates!"));
 
 	Score = 0;								// Reset score
+	WinState = EWinState::None;				// Reset win state
 	CurrentType = EBlockType::Cross;		// Starting from cross
-	//CurrentGameState = 0;					// Enable player inputs
-	IsInMatch = true;
+	IsInMatch = true;						// Enable player inputs
 
-	UE_LOG(LogTemp, Log, TEXT("Reset complete!"));
+	UE_LOG(LogGrid, Log, TEXT("Reset complete!"));
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -9,6 +9,7 @@
 #include "Public/TicTacToeDefinitionsHolder.h"
 
 #define TOSTR(var) #var
+DEFINE_LOG_CATEGORY(LogBlock);
 
 ATicTacToeBlock::ATicTacToeBlock()
 {
@@ -65,7 +66,7 @@ void ATicTacToeBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimi
 
 void ATicTacToeBlock::HandleClicked()
 {
-	// Do not handle click if the block has already been activated or current game state are not in match.
+	// Do not handle click if the block has already been activated or currently not in match.
 	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
 	{
 		return;
@@ -91,8 +92,8 @@ UMaterialInterface* ATicTacToeBlock::GetMaterialByType(EBlockType _type) {
 
 void ATicTacToeBlock::Highlight(bool bOn)
 {
-	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %s, INMATCH: %s, WINSTATE: %s"), OwningGrid->GetIndex(this), TOSTR(BlockType), TOSTR(OwningGrid->IsInMatch), TOSTR(OwningGrid->WinState));
-	// Do not highlight if the block has already been activated or if the current game state has not set to 0.
+	UE_LOG(LogBlock, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %s, INMATCH: %s, WINSTATE: %s"), OwningGrid->GetIndex(this), TOSTR(BlockType), TOSTR(OwningGrid->IsInMatch), TOSTR(OwningGrid->WinState));
+	// Do not highlight if the block has already been activated or currently not in match.
 	if (BlockType != EBlockType::None || !OwningGrid->IsInMatch)
 	{
 		return;
@@ -110,6 +111,7 @@ void ATicTacToeBlock::Highlight(bool bOn)
 
 void ATicTacToeBlock::SetType(EBlockType _type)
 {
+	UE_LOG(LogBlock, Verbose, TEXT("Changing block's type to %s!"), TOSTR(_type));
 	SetMaterialByType(_type);
 	BlockType = _type;
 }
@@ -121,7 +123,7 @@ EBlockType ATicTacToeBlock::GetBlockType()
 
 void ATicTacToeBlock::SetMaterialByType(EBlockType _type)
 {
-	UE_LOG(LogTemp, Verbose, TEXT("Changing material to %s!"), TOSTR(_type));
+	UE_LOG(LogBlock, VeryVerbose, TEXT("Changing material to %s!"), TOSTR(_type));
 	UMaterialInterface* matI;
 	matI = GetMaterialByType(_type);
 	BlockMesh->SetMaterial(0, matI);

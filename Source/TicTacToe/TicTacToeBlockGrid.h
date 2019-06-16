@@ -8,6 +8,8 @@
 #include "TicTacToeBlock.h"
 #include "TicTacToeBlockGrid.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogGrid, Log, Verbose);
+
 /** Class used to spawn blocks and manage score */
 UCLASS(minimalapi)
 class ATicTacToeBlockGrid : public AActor
@@ -71,11 +73,8 @@ public:
 	/** Handle the turn when block is being clicked */
 	void HandleTurn(ATicTacToeBlock* executedBlock);
 
-	/** Handle calling AI on pre-next turn */
-	void OnPreNextTurn();
-
 	/** Returns winner block type. 0 to none, 1 to circle win, -1 to cross win, 2 to draw. */
-	EWinState CheckWin(ATicTacToeBlock* checkBlock); // TODO: fix magic number
+	EWinState CheckWinState(ATicTacToeBlock* checkBlock); // TODO: fix magic number
 
 	/** Returns position of array from 2D vector */
 	int GetIndex(int num_x, int num_y);
