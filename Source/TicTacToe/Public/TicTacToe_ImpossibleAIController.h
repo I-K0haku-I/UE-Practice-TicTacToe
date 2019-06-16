@@ -6,16 +6,21 @@
 #include "AIController.h"
 #include "TicTacToeBlock.h"
 #include "TicTacToeDefinitionsHolder.h"
+#include "TicTacToeEasyAIController.h"
+#include "TicTacToeActor.h"
 #include "TicTacToe_ImpossibleAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TICTACTOE_API ATicTacToe_ImpossibleAIController : public AAIController
+class ATicTacToe_ImpossibleAIController : public AAIController, public ITicTacToeActor
 {
 	GENERATED_BODY()
 	
+public:
+	ATicTacToe_ImpossibleAIController();
+
 	// add IActor
 	UPROPERTY()
 	int32 Priority;
@@ -23,8 +28,11 @@ class TICTACTOE_API ATicTacToe_ImpossibleAIController : public AAIController
 	// UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Block Type")
 	EBlockType MyBlockType;
 
-public:
-	FIntPoint GetTargetBlockPosition(TArray<ATicTacToeBlock*> blockArray);
+	class ITicTacToeActor* Enemy;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="AI STUFF")
+		FIntPoint GetTargetBlockPosition(const TArray<ATicTacToeBlock*>& blockArray);
+		virtual FIntPoint GetTargetBlockPosition_Implementation(const TArray<ATicTacToeBlock*>& blockArray) override;
 
 protected:
 	FIntPoint NotPlacedPosition;
@@ -39,4 +47,8 @@ private:
 	bool CanWinWithTile(FIntPoint tilePos, EBlockType blockType, TArray<ATicTacToeBlock*> blockArray);
 
 	int GetIndex(int numX, int numY);
+	int GetIndex(FIntPoint point);
+	FIntPoint GetPos(int32 index);
+	FIntPoint MirrorPos(FIntPoint point);
+	FIntPoint GetPlacedBlockPos(TArray<FIntPoint> Choices, TArray<ATicTacToeBlock*> blockArray);
 };
