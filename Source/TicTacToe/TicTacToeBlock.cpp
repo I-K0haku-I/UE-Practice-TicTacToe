@@ -62,22 +62,14 @@ void ATicTacToeBlock::OnFingerPressedBlock(ETouchIndex::Type FingerIndex, UPrimi
 
 void ATicTacToeBlock::HandleClicked()
 {
-	// Do not handle click if the block has already been activated.
-	if (BlockType != 0)
+	// Do not handle click if the block has already been activated or current game state are not in match.
+	if (BlockType != 0 || OwningGrid->CurrentGameState != 0)
 	{
 		return;
 	}
-	
-	BlockType = OwningGrid->GetCurrentType();
 
-	// Change material
-	BlockMesh->SetMaterial(0, GetMaterialByType(BlockType));
 	// Tell the Grid
-	if (OwningGrid != nullptr)
-	{
-		OwningGrid->AddScore();
-		OwningGrid->ChangeTurn();
-	}
+	OwningGrid->HandleTurn(this);
 }
 
 UMaterialInterface* ATicTacToeBlock::GetMaterialByType(int Type) {
@@ -94,8 +86,9 @@ UMaterialInterface* ATicTacToeBlock::GetMaterialByType(int Type) {
 
 void ATicTacToeBlock::Highlight(bool bOn)
 {
-	// Do not highlight if the block has already been activated.
-	if (BlockType != 0)
+	UE_LOG(LogTemp, VeryVerbose, TEXT("TILEARRAYPOS: %d, BLOCKTYPE: %d, CURRENTGAMESTATE: %d"), OwningGrid->GetPosition(this), BlockType, OwningGrid->CurrentGameState);
+	// Do not highlight if the block has already been activated or if the current game state has not set to 0.
+	if (BlockType != 0 || OwningGrid->CurrentGameState != 0)
 	{
 		return;
 	}
@@ -106,6 +99,19 @@ void ATicTacToeBlock::Highlight(bool bOn)
 	}
 	else
 	{
-		BlockMesh->SetMaterial(0, BaseMaterial);
+		SetMaterialByType(BlockType);
 	}
+}
+
+void ATicTacToeBlock::SetType(int _type)
+{
+	SetMaterialByType(_type);
+	BlockType = _type;
+}
+
+void ATicTacToeBlock::SetMaterialByType(int _type)
+{
+	UE_LOG(LogTemp, Verbose, TEXT("Changing material to %d!"), _type);
+	UMaterialInterface* matI = GetMaterialByType(_type);
+	BlockMesh->SetMaterial(0, matI);
 }

@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "TicTacToeBlock.generated.h"
 
-/** A block that can be clickedadsfasdfasdfasdf */
+/** A block that can be clicked */
 UCLASS(minimalapi)
 class ATicTacToeBlock : public AActor
 {
@@ -20,11 +20,11 @@ class ATicTacToeBlock : public AActor
 	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* BlockMesh;
 
+	/** Which type are we currently? */
+	int BlockType; // magic numbers not so good, should be enum
+
 public:
 	ATicTacToeBlock();
-
-	/** Which type are we currently?*/
-	int BlockType; // magic numbers not so good, should be enum
 
 	/** Pointer to white material used on default block */
 	UPROPERTY()
@@ -56,10 +56,17 @@ public:
 
 	void HandleClicked();
 
-	/** Gets the material by int */
-	UMaterialInterface* GetMaterialByType(int Type);// should this be bool?
+	/** Gets the material by type */
+	UMaterialInterface* GetMaterialByType(int Type); // magica numba
 
 	void Highlight(bool bOn);
+
+	/** Sets the type of block */
+	void SetType(int _type);
+
+private:
+	/** Sets the material by type */
+	void SetMaterialByType(int _type);
 
 public:
 	/** Returns DummyRoot subobject **/
