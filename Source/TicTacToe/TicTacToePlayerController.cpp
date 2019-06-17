@@ -8,4 +8,12 @@ ATicTacToePlayerController::ATicTacToePlayerController()
 	bEnableClickEvents = true;
 	bEnableTouchEvents = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+    
+	Priority = 5;
+}
+
+
+FIntPoint ATicTacToePlayerController::GetTargetBlockPosition_Implementation(const TArray<ATicTacToeBlock*>& blockArray)
+{
+	return FIntPoint(0, 0);
 }

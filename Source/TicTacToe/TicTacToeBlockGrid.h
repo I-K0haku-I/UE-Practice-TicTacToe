@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TicTacToeBlock.h"
 #include "TicTacToeBlockGrid.generated.h"
 
 /** Class used to spawn blocks and manage score */
@@ -26,8 +27,14 @@ public:
 	/** How many blocks have been clicked */
 	int32 Score;
 
-	/** Current turn role by int8. 1 to circle, -1 to cross.*/
+	/** Current turn role by int. 1 to circle, -1 to cross. */
 	int CurrentType;
+
+	/** Current game state by int. 0 to in match, 1 to circle win, -1 to cross win, 2 to draw game, 3 to in pause. */
+	int CurrentGameState;
+
+	/** Array of owning blocks */
+	TArray<ATicTacToeBlock*> BlockArray;
 
 	/** Number of blocks along each side of grid */
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
@@ -50,6 +57,26 @@ public:
 	int GetCurrentType();
 
 	void ChangeTurn();
+
+	/** Handle the turn when block is being clicked */
+	void HandleTurn(ATicTacToeBlock* executedBlock);
+
+	/** Handle calling AI on next turn */
+	void OnNextTurn();
+
+	/** Returns winner block type. 0 to none, 1 to circle win, -1 to cross win, 2 to draw. */
+	int CheckWin(ATicTacToeBlock* checkBlock); // TODO: fix magic number
+
+	/** Returns position of array from 2D vector */
+	int GetPosition(int num_x, int num_y);
+	/** Returns position of array from item of array */
+	int GetPosition(ATicTacToeBlock * block_pos);
+
+	/** Handle the resetting game */
+	void ResetGame();
+
+	/** Handle the game end */
+	void HandleGameEnd(); // TODO: implement this.
 
 	/** Returns DummyRoot subobject **/
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
