@@ -3,6 +3,8 @@
 #pragma once
 
 #include "TicTacToeLibrary.generated.h"
+#include "TicTacToeDefinitionsHolder.h"
+#include "TicTacToeBlock.h"
 
 UCLASS()
 class UTicTacToeLibrary : public UObject
@@ -12,4 +14,5 @@ class UTicTacToeLibrary : public UObject
 	static int GetIndex(int numX, int numY);
 	static int GetIndex(FIntPoint point);
 	static FIntPoint GetPos(int32 index);
+	static bool CanWinWithBlock(FIntPoint blockPosition, EBlockType winningBlockType, TArray<ATicTacToeBlock*> blockArray);
 };

@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "TicTacToeBlock.h"
 #include "TicTacToeDefinitionsHolder.h"
-#include "TicTacToeEasyAIController.h"
 #include "TicTacToeActor.h"
 #include "TicTacToe_ImpossibleAIController.generated.h"
 
@@ -44,11 +43,6 @@ protected:
 	TArray<FIntPoint> CornerChoices;
 
 private:
-	bool CanWinWithTile(FIntPoint tilePos, EBlockType blockType, TArray<ATicTacToeBlock*> blockArray);
-
-	int GetIndex(int numX, int numY);
-	int GetIndex(FIntPoint point);
-	FIntPoint GetPos(int32 index);
 	FIntPoint MirrorPos(FIntPoint point);
 	FIntPoint GetPlacedBlockPos(TArray<FIntPoint> Choices, TArray<ATicTacToeBlock*> blockArray);
 };
